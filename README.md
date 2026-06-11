@@ -12,7 +12,8 @@ An Arduino-based garage parking assistant that uses a TF-Luna LiDAR sensor to dr
   - `FLASHING RED` — too close, back off (≤ 3 ft)
 - **Wake-up detection**: if a car is already parked at boot, the lights stay off so you can back out without distraction. The system re-arms automatically once the car clears.
 - **Auto power-down**: lights turn off after the car has been parked for a while.
-- **Summer mode**: a physical switch flips the unit into a classic Green → Yellow → Red traffic light cycle.
+- **Summer mode**: a physical switch flips the unit into a classic Green → Yellow → Red traffic light cycle, with an automatic shutoff after ~300 cycles (~2 hours) to spare the relays. Flip back to parking mode to reset the counter.
+- **Boot light show**: each light cycles on in sequence, then all three fire simultaneously as a hardware self-test. On AVR boards (Uno/Nano) the synchronized flash uses direct `PORTD` manipulation so the relays click as one; other boards fall back to `digitalWrite`.
 - **Active-low relay support** with a friendly `RELAY_ON` / `RELAY_OFF` abstraction.
 - **Checksummed LiDAR frames** to reject corrupt readings.
 

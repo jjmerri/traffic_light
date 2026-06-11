@@ -2,6 +2,17 @@
 //   SMART TRAFFIC LIGHT PARKING ASSISTANT
 //   (TF-LUNA LiDAR - ULTIMATE EDITION)
 // ==========================================
+// Designed for Arduino Uno/Nano, but safely compiles on any board!
+// 
+// Wiring Guide:
+// - Green Relay  -> Pin 2
+// - Yellow Relay -> Pin 3
+// - Red Relay    -> Pin 4
+// - Mode Switch  -> Pin 12 (to Ground)
+// - TF-Luna RX   -> Pin 10
+// - TF-Luna TX   -> Pin 9 (Leave UNPLUGGED to protect 3.3v sensor!)
+// ==========================================
+
 #include <SoftwareSerial.h>
 
 // --- CUSTOM RELAY LOGIC ---
@@ -16,7 +27,6 @@ const int redLight = 4;
 const int modeSwitch = 12;
 
 // Set up the LiDAR serial communication (RX on Pin 10, TX on Pin 9)
-// NOTE: Pin 9 (TX) should remain unplugged to protect the 3.3V sensor!
 SoftwareSerial lidarSerial(10, 9); 
 
 // --- PARKING DISTANCES (Inches) ---
@@ -63,15 +73,35 @@ void setup() {
   delay(500); 
 
   // Step 3: All ON (The visual confirmation)
-  digitalWrite(greenLight, RELAY_ON);
-  digitalWrite(yellowLight, RELAY_ON);
-  digitalWrite(redLight, RELAY_ON);
+  // 
+  // WHY USE PORTD? 
+  // digitalWrite() executes sequentially. When firing three heavy mechanical 
+  // relays, that micro-delay causes a noticeable, staggered "ka-ka-clack" sound,
+  // and you can visually see the lights turn on one after the other. 
+  // Direct Port Manipulation (PORTD) bypasses the software and flips the hardware 
+  // register directly. This forces Pins 2, 3, and 4 to fire simultaneously on the 
+  // exact same CPU clock cycle, resulting in a single, unified "snap" and a 
+  // perfectly synchronized visual flash.
+  // The #if directive ensures this only runs on compatible Uno/Nano boards, 
+  // safely falling back to digitalWrite() for ESP32/Mega boards.
+  #if defined(__AVR_ATmega328P__)
+    PORTD &= ~B00011100; 
+  #else
+    digitalWrite(greenLight, RELAY_ON);
+    digitalWrite(yellowLight, RELAY_ON);
+    digitalWrite(redLight, RELAY_ON);
+  #endif
+  
   delay(1000); 
   
   // Step 4: All OFF & Ready
-  digitalWrite(greenLight, RELAY_OFF);
-  digitalWrite(yellowLight, RELAY_OFF);
-  digitalWrite(redLight, RELAY_OFF);
+  #if defined(__AVR_ATmega328P__)
+    PORTD |= B00011100; 
+  #else
+    digitalWrite(greenLight, RELAY_OFF);
+    digitalWrite(yellowLight, RELAY_OFF);
+    digitalWrite(redLight, RELAY_OFF);
+  #endif
   
   delay(250); 
 }
