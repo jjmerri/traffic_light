@@ -26,14 +26,14 @@ An Arduino-based garage parking assistant that uses a TF-Luna LiDAR sensor to dr
 
 ### Pin map
 
-| Function          | Arduino Pin |
-| ----------------- | ----------- |
-| Green light relay | D2          |
-| Yellow light relay| D3          |
-| Red light relay   | D4          |
-| Mode switch       | D12 (input pull-up) |
-| LiDAR RX (Arduino → SoftwareSerial) | D10 |
-| LiDAR TX (Arduino → SoftwareSerial) | D9  |
+| Function                            | Arduino Pin         |
+| ----------------------------------- | ------------------- |
+| Green light relay                   | D2                  |
+| Yellow light relay                  | D3                  |
+| Red light relay                     | D4                  |
+| Mode switch                         | D12 (input pull-up) |
+| LiDAR RX (Arduino → SoftwareSerial) | D10                 |
+| LiDAR TX (Arduino → SoftwareSerial) | D9                  |
 
 > **Note:** Pin 9 (TX to the LiDAR) should be left unplugged. The TF-Luna is a 3.3V device and the Arduino's 5V TX line can damage it. The sensor streams data continuously, so no commands need to be sent.
 
