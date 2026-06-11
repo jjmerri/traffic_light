@@ -1,6 +1,6 @@
 // ==========================================
 //   SMART TRAFFIC LIGHT PARKING ASSISTANT
-//   (TF-LUNA LiDAR - GARAGE SHELF EDITION)
+//   (TF-LUNA LiDAR - ULTIMATE EDITION)
 // ==========================================
 #include <SoftwareSerial.h>
 
@@ -32,8 +32,9 @@ bool carAlreadyHere = false;
 int parkedCounter = 0;          
 int lastKnownDistance = 999;    
 
-// --- ANTI-FLICKER TRACKER ---
+// --- ANTI-FLICKER & TIMEOUT TRACKERS ---
 int currentState = 0; // 0=Standby, 1=Green, 2=Yellow, 3=Red, 4=Flashing Red
+int summerCycleCount = 0; // Tracks the number of Summer Mode loops
 
 void setup() {
   pinMode(greenLight, OUTPUT);
@@ -50,10 +51,27 @@ void setup() {
   digitalWrite(yellowLight, RELAY_OFF);
   digitalWrite(redLight, RELAY_OFF);
   
+  // ---------------------------------------------------------
   // SYSTEM BOOT LIGHT SHOW
+  // ---------------------------------------------------------
+  // Step 1: Sequential Cycle
   digitalWrite(greenLight, RELAY_ON); delay(750); digitalWrite(greenLight, RELAY_OFF);
   digitalWrite(yellowLight, RELAY_ON); delay(750); digitalWrite(yellowLight, RELAY_OFF);
   digitalWrite(redLight, RELAY_ON); delay(750); digitalWrite(redLight, RELAY_OFF);
+  
+  // Step 2: All OFF (Brief pause)
+  delay(500); 
+
+  // Step 3: All ON (The visual confirmation)
+  digitalWrite(greenLight, RELAY_ON);
+  digitalWrite(yellowLight, RELAY_ON);
+  digitalWrite(redLight, RELAY_ON);
+  delay(1000); 
+  
+  // Step 4: All OFF & Ready
+  digitalWrite(greenLight, RELAY_OFF);
+  digitalWrite(yellowLight, RELAY_OFF);
+  digitalWrite(redLight, RELAY_OFF);
   
   delay(250); 
 }
@@ -113,6 +131,9 @@ void updateLidarDistance() {
 // MODE 1: WINTER PARKING ASSISTANT 
 // ==========================================
 void runParkingMode() {
+  // Reset the Summer Mode timeout counter anytime we switch back to Parking Mode
+  summerCycleCount = 0; 
+
   updateLidarDistance(); 
   
   // WAKE-UP LOOK 
@@ -215,19 +236,31 @@ void runParkingMode() {
 // MODE 2: SUMMER TRAFFIC LIGHT
 // ==========================================
 void runSummerMode() {
-  Serial.println("SUMMER MODE: Green Light (10s)");
+  // TIMEOUT PROTECTOR: Stop after 300 cycles (approx 2 hours) to save the relays
+  if (summerCycleCount >= 300) {
+    digitalWrite(greenLight, RELAY_OFF);
+    digitalWrite(yellowLight, RELAY_OFF);
+    digitalWrite(redLight, RELAY_OFF);
+    delay(1000); 
+    return; // Exits the function early, locking the lights off
+  }
+
+  summerCycleCount++; // Add 1 to the loop counter
+  
+  Serial.print("SUMMER MODE CYCLE: ");
+  Serial.print(summerCycleCount);
+  Serial.println(" / 300");
+
   digitalWrite(greenLight, RELAY_ON);
   digitalWrite(yellowLight, RELAY_OFF);
   digitalWrite(redLight, RELAY_OFF);
   delay(10000); 
   
-  Serial.println("SUMMER MODE: Yellow Light (4s)");
   digitalWrite(greenLight, RELAY_OFF);
   digitalWrite(yellowLight, RELAY_ON);
   digitalWrite(redLight, RELAY_OFF);
   delay(4000); 
   
-  Serial.println("SUMMER MODE: Red Light (10s)");
   digitalWrite(greenLight, RELAY_OFF);
   digitalWrite(yellowLight, RELAY_OFF);
   digitalWrite(redLight, RELAY_ON);
