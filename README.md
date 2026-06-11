@@ -19,10 +19,10 @@ An Arduino-based garage parking assistant that uses a TF-Luna LiDAR sensor to dr
 
 ## Hardware
 
-- Arduino (Uno / Nano / similar 5V board)
-- TF-Luna LiDAR sensor (UART mode, 115200 baud)
-- 3-channel relay module (active-low) driving green / yellow / red lights
-- SPDT toggle switch for mode selection
+- Arduino Uno R3 (ATmega328P) — also works on Nano or any pin-compatible 5V AVR board
+- Benewake TF-Luna LiDAR sensor (UART mode, 115200 baud)
+- 4-channel 5V active-low relay module (only 3 channels used — green / yellow / red)
+- SPST ON-OFF toggle switch for mode selection
 
 ### Pin map
 
