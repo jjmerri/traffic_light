@@ -24,6 +24,20 @@ An Arduino-based garage parking assistant that uses a TF-Luna LiDAR sensor to dr
 - 4-channel 5V active-low relay module (only 3 channels used — green / yellow / red)
 - SPST ON-OFF toggle switch for mode selection
 
+### Wiring diagrams
+
+The build is split into two wiring diagrams — the low-voltage control side and the AC load side.
+
+**Control side** (Arduino ↔ TF-Luna ↔ relay inputs ↔ mode switch):
+
+![Control-side wiring](traffic_light_control_side_wiring.svg)
+
+**Relay → lamp side** (each relay channel switching its bulb on AC mains):
+
+![Relay-to-lamp wiring](traffic_light_relay_to_lamp_wiring.svg)
+
+> ⚠ The relay-to-lamp diagram involves AC mains. Wire only with the circuit de-energized and follow your local electrical code.
+
 ### Pin map
 
 | Function                            | Arduino Pin         |
