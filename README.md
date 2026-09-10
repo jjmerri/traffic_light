@@ -1,10 +1,10 @@
 # Smart Traffic Light Parking Assistant
 
-An Arduino-based garage parking assistant that uses a TF-Luna LiDAR sensor to drive a 3-color traffic light, helping you park your car in exactly the right spot. A toggle switch lets the same hardware double as a decorative summer-mode traffic light cycle.
+An Arduino-based garage parking assistant that uses a TFmini-S LiDAR sensor to drive a 3-color traffic light, helping you park your car in exactly the right spot. A toggle switch lets the same hardware double as a decorative summer-mode traffic light cycle.
 
 ## Features
 
-- **Distance-based parking guidance** using a TF-Luna LiDAR sensor over UART
+- **Distance-based parking guidance** using a TFmini-S LiDAR sensor over UART
 - **Four guidance states** with hysteresis to prevent flicker on threshold boundaries:
   - `GREEN` — pull in (≤ 22.5 ft)
   - `YELLOW` — slow down (≤ 10 ft)
@@ -20,7 +20,7 @@ An Arduino-based garage parking assistant that uses a TF-Luna LiDAR sensor to dr
 ## Hardware
 
 - Arduino Uno R3 (ATmega328P) — also works on Nano or any pin-compatible 5V AVR board
-- Benewake TF-Luna LiDAR sensor (UART mode, 115200 baud)
+- Benewake TFmini-S LiDAR sensor (UART mode, 115200 baud, 4-pin connector, 0.1–12 m range)
 - 4-channel 5V active-low relay module (only 3 channels used — green / yellow / red)
 - SPST ON-OFF toggle switch for mode selection
 
@@ -28,7 +28,7 @@ An Arduino-based garage parking assistant that uses a TF-Luna LiDAR sensor to dr
 
 The build is split into two wiring diagrams — the low-voltage control side and the AC load side.
 
-**Control side** (Arduino ↔ TF-Luna ↔ relay inputs ↔ mode switch):
+**Control side** (Arduino ↔ TFmini-S ↔ relay inputs ↔ mode switch):
 
 ![Control-side wiring](traffic_light_control_side_wiring.svg)
 
@@ -46,10 +46,21 @@ The build is split into two wiring diagrams — the low-voltage control side and
 | Yellow light relay                  | D3                  |
 | Red light relay                     | D4                  |
 | Mode switch                         | D12 (input pull-up) |
-| LiDAR RX (Arduino → SoftwareSerial) | D10                 |
-| LiDAR TX (Arduino → SoftwareSerial) | D9                  |
+| SoftwareSerial RX (← LiDAR TXD)     | D10                 |
+| SoftwareSerial TX (→ LiDAR RXD)     | D9 (leave unplugged)|
 
-> **Note:** Pin 9 (TX to the LiDAR) should be left unplugged. The TF-Luna is a 3.3V device and the Arduino's 5V TX line can damage it. The sensor streams data continuously, so no commands need to be sent.
+### Sensor connector
+
+The TFmini-S ships with a 4-pin cable:
+
+| TFmini-S pin | Wire color | Connects to             |
+| ------------ | ---------- | ----------------------- |
+| 1 — +5V      | Red        | Arduino 5V              |
+| 2 — RXD      | White      | *leave unconnected*     |
+| 3 — TXD      | Green      | Arduino D10             |
+| 4 — GND      | Black      | Arduino GND             |
+
+> **Note:** Pin 9 (TX to the LiDAR) should be left unplugged, and the sensor's white RXD wire left unconnected. The TFmini-S runs on 5V but its UART is 3.3V logic, so the Arduino's 5V TX line can damage it. The sensor streams data continuously, so no commands need to be sent.
 
 ### Mode switch
 

@@ -1,6 +1,6 @@
 // ==========================================
 //   SMART TRAFFIC LIGHT PARKING ASSISTANT
-//   (TF-LUNA LiDAR - ULTIMATE EDITION)
+//   (TFMINI-S LiDAR - ULTIMATE EDITION)
 // ==========================================
 // Designed for Arduino Uno/Nano, but safely compiles on any board!
 // 
@@ -9,8 +9,8 @@
 // - Yellow Relay -> Pin 3
 // - Red Relay    -> Pin 4
 // - Mode Switch  -> Pin 12 (to Ground)
-// - TF-Luna RX   -> Pin 10
-// - TF-Luna TX   -> Pin 9 (Leave UNPLUGGED to protect 3.3v sensor!)
+// - TFmini-S TX  -> Pin 10 (green wire)
+// - TFmini-S RX  -> Pin 9 (Leave UNPLUGGED to protect 3.3v sensor!)
 // ==========================================
 
 #include <SoftwareSerial.h>
