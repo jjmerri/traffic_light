@@ -2,6 +2,12 @@
 
 An Arduino-based garage parking assistant that uses a TFmini-S LiDAR sensor to drive a 3-color traffic light, helping you park your car in exactly the right spot. A toggle switch lets the same hardware double as a decorative summer-mode traffic light cycle.
 
+## Demo
+
+![A car pulling into the garage while the traffic light steps from green to yellow to solid red, then flashes red when the car goes in too far](traffic_light_demo.gif)
+
+Parking mode at real speed: green to pull in, yellow to slow down, solid red at the spot. The car rolls in a few inches too far, gets flashing red, and backs off. Only stationary stretches are trimmed — nothing is sped up.
+
 ## Features
 
 - **Distance-based parking guidance** using a TFmini-S LiDAR sensor over UART
